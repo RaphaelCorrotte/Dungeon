@@ -1,0 +1,8 @@
+class Game
+  attr_reader rooms: Hash[Symbol, Room]
+  attr_reader current_room: Array[Integer]
+
+  def intitialize: -> void
+  def draw_room: (Room) -> void
+  def draw_wall: (Symbol, open: bool) -> void
+end
