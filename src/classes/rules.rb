@@ -8,4 +8,8 @@ class Rules
   def self.responsive(coordinate, width_or_height)
     (width_or_height * coordinate / WIDTH).floor
   end
+
+  def self.compare(a, b)
+    (a - b).abs
+  end
 end

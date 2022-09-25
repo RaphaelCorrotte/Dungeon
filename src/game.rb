@@ -20,14 +20,16 @@ class Game < Gosu::Window
         key.is_a?(Array) ? self[key.join(":").to_sym] = value : super(key, value)
       end
     end.new
-    @rooms[@current_room] = Room.new(@current_room, **Hash[north: true, south: true, east: true, west: true])
+    @rooms[@current_room] = Room.new(@current_room, **Hash[north: false, south: true, east: true, west: true])
     @player = Player.new
+    @second = Player.new
+    @second.warp(100, 100)
     @player.warp(250, 250)
   end
 
   def draw
-    draw_rect(0, 0, Rules::WIDTH, Rules::HEIGHT, Gosu::Color::YELLOW)
-    @player.draw(Rules.responsive(50, width), Rules.responsive(50, height))
+    @player.draw
+    @second.draw
     draw_room(rooms[@current_room])
   end
 
@@ -44,62 +46,13 @@ class Game < Gosu::Window
     end
   end
 
-  def draw_wall(cardinal_direction, open: false)
-    raise ArgumentError, "Invalid cardinal direction: #{cardinal_direction}" unless %i[north south east west].include?(cardinal_direction.to_sym)
+  def draw_wall(cardinal, open:); end
 
-    coordinates = Hash[
-      north: [Rules.responsive(30, width), Rules.responsive(30, height), Rules.responsive(470, width), Rules.responsive(30, height)],
-      south: [Rules.responsive(30, width), Rules.responsive(470, height), Rules.responsive(470, width), Rules.responsive(470, height)],
-      east: [Rules.responsive(470, width), Rules.responsive(30, height), Rules.responsive(470, width), Rules.responsive(470, height)],
-      west: [Rules.responsive(30, width), Rules.responsive(30, height), Rules.responsive(30, width), Rules.responsive(470, height)]
-    ]
-    if open
-      doors = Hash[
-        north: [
-          [Rules.responsive(200, width), Rules.responsive(30, height), Rules.responsive(200, width), 0],
-          [Rules.responsive(300, width), Rules.responsive(30, height), Rules.responsive(300, width), 0]
-        ],
-        west: [
-          [Rules.responsive(30, width), Rules.responsive(200, height), 0, Rules.responsive(200, height)],
-          [Rules.responsive(30, width), Rules.responsive(300, height), 0, Rules.responsive(300, height)]
-        ],
-        south: [
-          [Rules.responsive(200, width), Rules.responsive(470, height), Rules.responsive(200, width), Rules.responsive(500, height)],
-          [Rules.responsive(300, width), Rules.responsive(470, height), Rules.responsive(300, width), Rules.responsive(500, height)]
-        ],
-        east: [
-          [Rules.responsive(470, width), Rules.responsive(200, height), Rules.responsive(500, width), Rules.responsive(200, height)],
-          [Rules.responsive(470, width), Rules.responsive(300, height), Rules.responsive(500, width), Rules.responsive(300, height)]
-        ]
-      ]
-      walls = Hash[
-        north: [
-          [Rules.responsive(30, width), Rules.responsive(30, height), Rules.responsive(200, width), Rules.responsive(30, height)],
-          [Rules.responsive(300, width), Rules.responsive(30, height), Rules.responsive(470, width), Rules.responsive(30, height)]
-        ],
-        west: [
-          [Rules.responsive(30, width), Rules.responsive(30, height), Rules.responsive(30, width), Rules.responsive(200, height)],
-          [Rules.responsive(30, width), Rules.responsive(300, height), Rules.responsive(30, width), Rules.responsive(470, height)]
-        ],
-        south: [
-          [Rules.responsive(30, width), Rules.responsive(470, height), Rules.responsive(200, width), Rules.responsive(470, height)],
-          [Rules.responsive(300, width), Rules.responsive(470, height), Rules.responsive(470, width), Rules.responsive(470, height)]
-        ],
-        east: [
-          [Rules.responsive(470, width), Rules.responsive(30, height), Rules.responsive(470, width), Rules.responsive(200, height)],
-          [Rules.responsive(470, width), Rules.responsive(300, height), Rules.responsive(470, width), Rules.responsive(470, height)]
-        ]
-      ]
-      doors[cardinal_direction].each do |coordinate|
-        Gosu.draw_line(coordinate[0], coordinate[1], Gosu::Color::WHITE, coordinate[2], coordinate[3], Gosu::Color::WHITE)
-      end
-      walls[cardinal_direction].each do |coordinate|
-        Gosu.draw_line(coordinate[0], coordinate[1], Gosu::Color::WHITE, coordinate[2], coordinate[3], Gosu::Color::WHITE)
-      end
-    else
-      Gosu.draw_line(coordinates[cardinal_direction][0], coordinates[cardinal_direction][1], Gosu::Color::WHITE, coordinates[cardinal_direction][2], coordinates[cardinal_direction][3],
-                     Gosu::Color::WHITE)
-    end
+  def resize(width, height)
+    self.resizable = true
+    self.width = width
+    self.height = height
+    self.resizable = false
   end
 end
 

@@ -1,21 +1,17 @@
 # frozen_string_literal: true
 
-class Player
+require File.expand_path("entity", File.dirname(__FILE__))
+
+class Player < Entity
+  attr_reader :step
+
   def initialize
-    @x = @y = 0.0
+    super(50, 50)
+    @step = 5
   end
 
-  def warp(x, y)
-    @x = x
-    @y = y
-  end
-
-  def move_forward = @y -= 5
-  def move_backward = @y += 5
-  def move_right = @x += 5
-  def move_left = @x -= 5
-
-  def draw(width, height)
-    Gosu.draw_rect(@x, @y, width, height, Gosu::Color::FUCHSIA)
-  end
+  def move_forward = @y -= @step
+  def move_backward = @y += @step
+  def move_right = @x += @step
+  def move_left = @x -= @step
 end
